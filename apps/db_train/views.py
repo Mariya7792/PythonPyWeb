@@ -21,6 +21,7 @@ class TrainView(View):
         self.answer9 = Author.objects.filter(age__lte=25)
         self.answer10 = None
 
+
         context = {f'answer{index}': self.__dict__[f'answer{index}'] for index in range(1,11)}  # Создайте здесь запросы к БД
 
         return render(request, 'train_db/training_db.html', context=context)
