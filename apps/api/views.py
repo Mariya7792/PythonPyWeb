@@ -7,7 +7,7 @@ from apps.db_train_alternative.models import Author
 from .serializers import AuthorSerializer
 
 class AuthorAPIView(APIView):
-    @crsf_exempt
+    @csrf_exempt
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     def get(self, request, pk=None):
@@ -36,4 +36,29 @@ class AuthorAPIView(APIView):
         except Author.DoesNotExist:
             return Response({"message": "Автор не найден"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = Aitjpr.
+        serializer = AuthorSerializer(author, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        try:
+            author = Author.objects.get(pk=pk)
+        except Author.DoesNotExist:
+            return Response({"message": "Автор не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AuthorSerializer(author, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            author = Author.objects.get(pk=pk)
+        except Author.DoesNotExist:
+            return Response({"message": "Автор не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+        author.delete()
+        return Respose(status=statis.HTTP_204_NO_CONTENT)
