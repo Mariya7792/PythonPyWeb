@@ -124,3 +124,23 @@ class AuthorREST(View):
                                 json_dumps_params={'ensure_ascii':False,
                                                    'indent': 4},
                                 )
+    def delete(self, request, id):
+        try:
+            author = Author.objects.get(id=id)
+            author.delete()
+            return JsonResponse({'message': 'Автор успешно удален'},
+                                json_dumps_params={'ensure_ascii':False,
+                                                   'indent': 4},
+                                )
+        except Author.DoesnotExist:
+            return JsonResponse({'error': 'Автор не найден'},
+                                status=404,
+                                json_dumps_params={'ensure_ascii':False,
+                                                   'indent': 4},
+                                )
+        except Exception as e:
+            return JsonResponse({'error': str(e)},
+                                status=400,
+                                json_dumps_params={'ensure_ascii': False,
+                                                   'indent':4},
+                                )
