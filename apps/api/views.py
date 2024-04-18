@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
 from django.views.decorators.csrf import csrf_exempt  # Чтобы post, put, patch, delete не требовали csrf токена (небезопасно)
 from apps.db_train_alternative.models import Author
 from .serializers import AuthorSerializer, AuthorModelSerializer
@@ -11,7 +11,7 @@ from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, CreateMode
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-
+from django_filters.rest_framework import DjangoFilterBackend
 class AuthorAPIView(APIView):
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
@@ -98,7 +98,10 @@ class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorModelSerializer
     pagination_class = AuthorPagination
-
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'email']
+    search_fields = ['email']
+    ordering_fields = ['name', 'email']
     def get_queryset(self):
         queryset = super().get_queryset()
         name = self.request.query_params.get('name')
@@ -108,3 +111,5 @@ class AuthorViewSet(ModelViewSet):
     @action(detail=True, methods=['post'])
     def my_action(self, request, pk=None):
         return Response({'message': f'Пользовательская функция для пользователя с pk={pk}'})
+
+
