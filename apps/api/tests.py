@@ -35,6 +35,7 @@ class AuthorViewSetTestCase(APITestCase):
         print(f"Ответ от сервера: {response.status_code}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         author = Author.objects.get(pk=self.author1.pk)
+        serializer = AuthorModelSerializer(author)
         print(f"Сериализатор вернул из БД: {serializer.data}")
         self.assertEqual(response.data, serializer.data)
 
