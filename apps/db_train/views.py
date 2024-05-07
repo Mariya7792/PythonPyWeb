@@ -19,7 +19,7 @@ class TrainView(View):
         self.answer7 = Author.objects.get(age=max_age['max_age'])
         self.answer8 = Author.objects.filter(phone_number__isnull=False).count()
         self.answer9 = Author.objects.filter(age__lte=25)
-        self.answer10 = Entry.objects.annotate(count_articles=Count('id')).values('author', 'count_articles')
+        self.answer10 = Author.objects.annotate(count_articles=Count('create_at')).values('username', 'count_articles')
 
 
         context = {f'answer{index}': self.__dict__[f'answer{index}'] for index in range(1,11)}  # Создайте здесь запросы к БД
